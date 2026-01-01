@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "evernote": {
+      "command": "uvx",
+      "args": [
+        "evernote-mcp"
+      ],
+      "env": {
+        "EVERNOTE_AUTH_TOKEN": "your_developer_token_here",
+        "EVERNOTE_BACKEND": "evernote"
+      }
+    }
+  }
+}
