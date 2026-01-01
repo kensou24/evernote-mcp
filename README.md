@@ -88,6 +88,91 @@ For local development:
 
 ## Usage Examples
 
+### With Claude Code
+
+[Claude Code](https://claude.ai/code) is a CLI tool that provides an interactive terminal experience for coding tasks with Claude. You can use the Evernote MCP server with Claude Code to manage your Evernote notes while working on projects.
+
+#### Installation
+
+1. Install Claude Code:
+```bash
+npm install -g @anthropic/claude-code
+```
+
+2. Configure the MCP server by editing `~/.config/claude-code/config.json`:
+```json
+{
+  "mcpServers": {
+    "evernote": {
+      "command": "uvx",
+      "args": ["evernote-mcp"],
+      "env": {
+        "EVERNOTE_AUTH_TOKEN": "your_token_here",
+        "EVERNOTE_BACKEND": "evernote"
+      }
+    }
+  }
+}
+```
+
+#### Example Workflows
+
+```bash
+# Start Claude Code
+claude-code
+
+# Example conversations in Claude Code:
+```
+
+```
+User: Create a note in my "Project Notes" notebook summarizing the current TODO items from src/todo.py
+
+Claude: I'll read the TODO file and create a note for you.
+
+[Reads src/todo.py, extracts TODOs]
+
+[Uses create_note tool with extracted content]
+
+Claude: I've created a note "TODO Summary" in your "Project Notes" notebook with 5 TODO items.
+```
+
+```
+User: Search my Evernote for notes about "API design" and summarize the key points
+
+Claude: Let me search for those notes and analyze them.
+
+[Uses search_notes tool with "API design"]
+[Gets note content for each result]
+[Analyzes and summarizes]
+
+Claude: Found 4 notes about API design. Key themes:
+1. RESTful principles - emphasized in 3 notes
+2. GraphQL considerations - mentioned in "API Architecture"
+3. Rate limiting strategies - covered in "API Security"
+```
+
+```
+User: Create a notebook called "Code Reviews" and add a note template for code review notes
+
+Claude: I'll set that up for you.
+
+[Uses create_notebook tool]
+[Uses create_note tool with template content]
+
+Claude: Created notebook "Code Reviews" with a template note containing:
+- Review checklist
+- Approval criteria
+- Common issues to watch for
+```
+
+#### Common Use Cases with Claude Code
+
+- **Documentation Sync**: Create Evernote notes from code comments or docstrings
+- **Meeting Notes**: Create structured notes from project discussions
+- **Task Tracking**: Sync TODO items between code and Evernote
+- **Research Organization**: Save research findings and code snippets to Evernote
+- **Code Review Documentation**: Document review outcomes in Evernote
+
 ### In Claude Desktop
 
 ```
@@ -148,11 +233,11 @@ Claude: I've created the note "Team Standup" in your "Meeting Notes" notebook.
 
 ## Resources
 
-- `notebooks` - List all notebooks
-- `notebook://{guid}` - Access notebook metadata
-- `note://{guid}` - Access note content (JSON)
-- `note-text://{guid}` - Access note content as plain text
-- `note-markdown://{guid}` - Access note content as Markdown
+- `file://notebooks` - List all notebooks
+- `file://notebook/{guid}` - Access notebook metadata
+- `file://note/{guid}` - Access note content (JSON)
+- `file://note-text/{guid}` - Access note content as plain text
+- `file://note-markdown/{guid}` - Access note content as Markdown
 
 ## Environment Variables
 

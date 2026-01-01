@@ -13,12 +13,12 @@ logger = logging.getLogger(__name__)
 def register_note_resources(mcp: FastMCP, client):
     """Register note resources."""
 
-    @mcp.resource("note://{guid}")
+    @mcp.resource("file://note/{guid}")
     def get_note_content(guid: str) -> str:
         """
         Get full note content.
 
-        URI format: note://{guid}
+        URI format: file://note/{guid}
 
         Args:
             guid: Note GUID
@@ -46,12 +46,12 @@ def register_note_resources(mcp: FastMCP, client):
         except Exception as e:
             return json.dumps(handle_evernote_error(e), indent=2)
 
-    @mcp.resource("note-text://{guid}")
+    @mcp.resource("file://note-text/{guid}")
     def get_note_text(guid: str) -> str:
         """
         Get note content as plain text.
 
-        URI format: note-text://{guid}
+        URI format: file://note-text/{guid}
 
         Args:
             guid: Note GUID
@@ -68,12 +68,12 @@ def register_note_resources(mcp: FastMCP, client):
         except Exception as e:
             return f"Error: {str(e)}"
 
-    @mcp.resource("note-markdown://{guid}")
+    @mcp.resource("file://note-markdown/{guid}")
     def get_note_markdown(guid: str) -> str:
         """
         Get note content as Markdown.
 
-        URI format: note-markdown://{guid}
+        URI format: file://note-markdown/{guid}
 
         Args:
             guid: Note GUID

@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 def register_notebook_resources(mcp: FastMCP, client):
     """Register notebook resources."""
 
-    @mcp.resource("notebooks")
+    @mcp.resource("file://notebooks")
     def list_all_notebooks() -> str:
         """
         List all notebooks as a resource.
@@ -38,12 +38,12 @@ def register_notebook_resources(mcp: FastMCP, client):
         except Exception as e:
             return json.dumps(handle_evernote_error(e), indent=2)
 
-    @mcp.resource("notebook://{guid}")
+    @mcp.resource("file://notebook/{guid}")
     def get_notebook_metadata(guid: str) -> str:
         """
         Get notebook metadata.
 
-        URI format: notebook://{guid}
+        URI format: file://notebook/{guid}
 
         Args:
             guid: Notebook GUID

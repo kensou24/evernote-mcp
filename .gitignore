@@ -77,3 +77,24 @@ logs/
 # Local config files
 *.local
 ClaudeDesktop_config.json
+
+# Poetry
+poetry.lock
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+cython_debug/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# Evernote credentials (if accidentally created)
+.evernote_auth_token
+*.auth_token
