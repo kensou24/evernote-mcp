@@ -1,5 +1,7 @@
 # Evernote MCP Server
 
+[English](README.md) | [简体中文](README.zh-CN.md)
+
 Model Context Protocol (MCP) server for Evernote - enables Claude Code to interact with your Evernote notes.
 
 > **Supports both [International Evernote](https://evernote.com) and [Yinxiang Biji (印象笔记)](https://yinxiang.com)**
