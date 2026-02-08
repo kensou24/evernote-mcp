@@ -8,8 +8,12 @@ Model Context Protocol (MCP) server for Evernote - enables Claude Code to intera
 
 ## Features
 
-- Notebook operations (create, update, delete, list)
-- Note operations (create, read, update, delete, copy, move)
+- **Notebook operations** (create, read, update, delete, list, get default)
+- **Note operations** (create, read, update, delete, copy, move, list, versions)
+- **Tag management** (create, read, update, delete, list, find by notebook)
+- **Saved searches** (create, read, update, delete, list)
+- **Advanced note features** (get content, search text, tag names, note versions)
+- **Sync & utilities** (sync state, note counts, find related content)
 - Full-text search using Evernote's search syntax
 - Multiple output formats (ENML, text, markdown, JSON)
 
@@ -91,6 +95,13 @@ Claude: I'll set that up for you.
 [Creates notebook and template note]
 ```
 
+```
+User: Find all notes tagged with "important" and list them by update time
+
+Claude: I'll search for notes with that tag and sort them.
+[Uses search_notes and list_tags]
+```
+
 ## Environment Variables
 
 | Variable | Default | Description |
@@ -100,25 +111,52 @@ Claude: I'll set that up for you.
 
 ## Available Tools
 
-### Notebooks
-- `create_notebook(name, stack)` - Create notebook
+### Notebooks (6 tools)
+- `create_notebook(name, stack)` - Create a new notebook
 - `list_notebooks()` - List all notebooks
-- `get_notebook(guid)` - Get notebook details
-- `update_notebook(guid, name, stack)` - Update notebook
-- `delete_notebook(guid)` - Delete notebook
+- `get_notebook(guid)` - Get notebook details by GUID
+- `update_notebook(guid, name, stack)` - Update notebook name/stack
+- `expunge_notebook(guid)` - Permanently delete notebook
+- `get_default_notebook()` - Get the default notebook for new notes
 
-### Notes
-- `create_note(title, content, notebook_guid, tags)` - Create note
+### Notes (8 tools)
+- `create_note(title, content, notebook_guid, tags, format)` - Create a new note
 - `get_note(guid, output_format)` - Get note (enml/text/markdown/json)
-- `update_note(guid, title, content)` - Update note
-- `delete_note(guid)` - Move to trash
-- `copy_note(guid, target_notebook_guid)` - Copy note
-- `move_note(guid, target_notebook_guid)` - Move note
-- `list_notes(notebook_guid, limit)` - List notes
+- `update_note(guid, title, content, format)` - Update note title/content
+- `delete_note(guid)` - Move note to trash
+- `expunge_note(guid)` - Permanently delete note
+- `copy_note(guid, target_notebook_guid)` - Copy note to another notebook
+- `move_note(guid, target_notebook_guid)` - Move note to another notebook
+- `list_notes(notebook_guid, limit)` - List notes in notebook
 
-### Search
-- `search_notes(query, notebook_guid)` - Search notes
+### Tags (7 tools)
 - `list_tags()` - List all tags
+- `get_tag(guid)` - Get tag details by GUID
+- `create_tag(name, parent_guid)` - Create a new tag
+- `update_tag(guid, name, parent_guid)` - Update tag name/parent
+- `expunge_tag(guid)` - Permanently delete tag
+- `list_tags_by_notebook(notebook_guid)` - List tags in a specific notebook
+- `untag_all(guid)` - Remove tag from all notes
+
+### Saved Searches (5 tools)
+- `list_searches()` - List all saved searches
+- `get_search(guid)` - Get saved search by GUID
+- `create_search(name, query)` - Create a new saved search
+- `update_search(guid, name, query)` - Update saved search
+- `expunge_search(guid)` - Delete saved search
+
+### Advanced Note Operations (5 tools)
+- `get_note_content(guid)` - Get ENML content only
+- `get_note_search_text(guid, note_only, tokenize_for_indexing)` - Get extracted plain text
+- `get_note_tag_names(guid)` - Get tag names for a note
+- `list_note_versions(note_guid)` - List previous versions (Premium only)
+- `get_note_version(note_guid, update_sequence_num, ...)` - Get specific version (Premium)
+
+### Search & Utilities (4 tools)
+- `search_notes(query, notebook_guid, limit)` - Search using Evernote query syntax
+- `get_sync_state()` - Get sync state information
+- `find_note_counts(query, with_trash)` - Get note counts per notebook/tag
+- `find_related(note_guid, plain_text, max_notes, ...)` - Find related notes/tags/notebooks
 
 ## License
 
