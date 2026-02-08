@@ -1,3 +1,3 @@
 """Evernote MCP Server - Model Context Protocol server for Evernote operations."""
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
