@@ -3,10 +3,8 @@ import logging
 from typing import Optional, List, Any
 
 # Import from evernote-backup package (needs to be installed)
-from evernote.edam.type.ttypes import Notebook, Note, Tag, SavedSearch
+from evernote.edam.type.ttypes import Notebook, Note, Tag, SavedSearch, Resource
 from evernote.edam.notestore.ttypes import NoteFilter, NotesMetadataResultSpec, RelatedQuery, RelatedResultSpec
-from evernote.edam.error.ttypes import EDAMUserException, EDAMSystemException, EDAMNotFoundException
-from evernote.edam.notestore.ttypes import NoteFilter, NotesMetadataResultSpec
 from evernote.edam.error.ttypes import EDAMUserException, EDAMSystemException, EDAMNotFoundException
 
 from evernote_backup.evernote_client import EvernoteClient as BaseEvernoteClient
@@ -242,3 +240,73 @@ class EvernoteMCPClient(BaseEvernoteClient):
     def find_related(self, query: RelatedQuery, result_spec: RelatedResultSpec) -> Any:
         """Find related entities (notes, notebooks, tags)."""
         return self.note_store.findRelated(query, result_spec)
+
+    # Resource operations
+
+    def get_resource(self, guid: str, with_data: bool = False,
+                    with_recognition: bool = False,
+                    with_attributes: bool = True,
+                    with_alternate_data: bool = False) -> Resource:
+        """Get resource by GUID."""
+        return self.note_store.getResource(
+            guid,
+            withData=with_data,
+            withRecognition=with_recognition,
+            withAttributes=with_attributes,
+            withAlternateData=with_alternate_data,
+        )
+
+    def get_resource_data(self, guid: str) -> bytes:
+        """Get resource binary data."""
+        return self.note_store.getResourceData(guid)
+
+    def get_resource_alternate_data(self, guid: str) -> bytes:
+        """Get resource alternate data."""
+        return self.note_store.getResourceAlternateData(guid)
+
+    def get_resource_attributes(self, guid: str) -> Any:
+        """Get resource attributes."""
+        return self.note_store.getResourceAttributes(guid)
+
+    def get_resource_by_hash(self, note_guid: str, content_hash: bytes,
+                             with_data: bool = False,
+                             with_recognition: bool = False,
+                             with_attributes: bool = True,
+                             with_alternate_data: bool = False) -> Resource:
+        """Get resource by content hash."""
+        return self.note_store.getResourceByHash(
+            note_guid,
+            content_hash,
+            withData=with_data,
+            withRecognition=with_recognition,
+            withAttributes=with_attributes,
+            withAlternateData=with_alternate_data,
+        )
+
+    def get_resource_recognition(self, guid: str) -> bytes:
+        """Get resource recognition data (OCR)."""
+        return self.note_store.getResourceRecognition(guid)
+
+    def get_resource_search_text(self, guid: str) -> str:
+        """Get resource search text."""
+        return self.note_store.getResourceSearchText(guid)
+
+    def update_resource(self, resource: Resource) -> int:
+        """Update existing resource."""
+        return self.note_store.updateResource(resource)
+
+    def set_resource_application_data_entry(self, guid: str, key: str, value: str) -> int:
+        """Set resource application data entry."""
+        return self.note_store.setResourceApplicationDataEntry(guid, key, value)
+
+    def unset_resource_application_data_entry(self, guid: str, key: str) -> int:
+        """Unset resource application data entry."""
+        return self.note_store.unsetResourceApplicationDataEntry(guid, key)
+
+    def get_resource_application_data(self, guid: str) -> Any:
+        """Get resource application data."""
+        return self.note_store.getResourceApplicationData(guid)
+
+    def get_resource_application_data_entry(self, guid: str, key: str) -> str:
+        """Get resource application data entry."""
+        return self.note_store.getResourceApplicationDataEntry(guid, key)
