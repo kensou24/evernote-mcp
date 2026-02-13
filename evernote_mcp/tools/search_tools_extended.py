@@ -9,6 +9,17 @@ from evernote_mcp.util.error_handler import handle_evernote_error
 logger = logging.getLogger(__name__)
 
 
+def serialize_scope(scope) -> Optional[dict]:
+    """Convert SavedSearchScope to a serializable dict."""
+    if scope is None:
+        return None
+    return {
+        "include_account": getattr(scope, 'includeAccount', None),
+        "include_personal_linked_notebooks": getattr(scope, 'includePersonalLinkedNotebooks', None),
+        "include_business_linked_notebooks": getattr(scope, 'includeBusinessLinkedNotebooks', None),
+    }
+
+
 def register_search_tools_extended(mcp: FastMCP, client):
     """Register saved search-related MCP tools."""
 
@@ -22,6 +33,7 @@ def register_search_tools_extended(mcp: FastMCP, client):
         """
         try:
             searches = client.list_searches()
+
             result = {
                 "success": True,
                 "searches": [
@@ -30,7 +42,7 @@ def register_search_tools_extended(mcp: FastMCP, client):
                         "name": s.name,
                         "query": s.query,
                         "format": getattr(s, 'format', None),
-                        "scope": getattr(s, 'scope', None),
+                        "scope": serialize_scope(getattr(s, 'scope', None)),
                     }
                     for s in searches
                 ]
@@ -53,13 +65,14 @@ def register_search_tools_extended(mcp: FastMCP, client):
         """
         try:
             search = client.get_search(guid)
+
             result = {
                 "success": True,
                 "guid": search.guid,
                 "name": search.name,
                 "query": search.query,
                 "format": getattr(search, 'format', None),
-                "scope": getattr(search, 'scope', None),
+                "scope": serialize_scope(getattr(search, 'scope', None)),
                 "update_sequence_num": getattr(search, 'updateSequenceNum', None),
             }
             return json.dumps(result, indent=2, ensure_ascii=False)
