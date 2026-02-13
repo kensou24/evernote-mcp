@@ -12,6 +12,7 @@ Model Context Protocol (MCP) server for Evernote - enables Claude Code to intera
 - **Note operations** (create, read, update, delete, copy, move, list, versions)
 - **Tag management** (create, read, update, delete, list, find by notebook)
 - **Saved searches** (create, read, update, delete, list)
+- **Resource/Attachment operations** (get, update, data, attributes, recognition)
 - **Advanced note features** (get content, search text, tag names, note versions)
 - **Sync & utilities** (sync state, note counts, find related content)
 - Full-text search using Evernote's search syntax
@@ -151,6 +152,20 @@ Claude: I'll search for notes with that tag and sort them.
 - `get_note_tag_names(guid)` - Get tag names for a note
 - `list_note_versions(note_guid)` - List previous versions (Premium only)
 - `get_note_version(note_guid, update_sequence_num, ...)` - Get specific version (Premium)
+
+### Resources/Attachments (13 tools)
+- `get_resource(guid, with_data, with_recognition, ...)` - Get resource by GUID
+- `get_resource_data(guid, encode)` - Get resource binary data (base64)
+- `get_resource_alternate_data(guid, encode)` - Get alternate data (e.g., PDF preview)
+- `get_resource_attributes(guid)` - Get resource metadata
+- `get_resource_by_hash(note_guid, content_hash, ...)` - Find resource by MD5 hash
+- `get_resource_recognition(guid, encode)` - Get OCR/recognition data
+- `get_resource_search_text(guid)` - Get extracted search text from resource
+- `update_resource(guid, mime, attributes)` - Update resource metadata
+- `set_resource_application_data_entry(guid, key, value)` - Set app data
+- `unset_resource_application_data_entry(guid, key)` - Remove app data
+- `get_resource_application_data(guid)` - Get all application data
+- `get_resource_application_data_entry(guid, key)` - Get specific app data entry
 
 ### Search & Utilities (4 tools)
 - `search_notes(query, notebook_guid, limit)` - Search using Evernote query syntax

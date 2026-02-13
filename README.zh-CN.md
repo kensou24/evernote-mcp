@@ -12,6 +12,7 @@ Evernote 的模型上下文协议（MCP）服务器——让 Claude Code 能够�
 - **笔记操作**（创建、读取、更新、删除、复制、移动、列表、版本管理）
 - **标签管理**（创建、读取、更新、删除、列表、按笔记本查找）
 - **保存的搜索**（创建、读取、更新、删除、列表）
+- **资源/附件操作**（获取、更新、数据、属性、识别）
 - **高级笔记功能**（获取内容、搜索文本、标签名称、笔记版本）
 - **同步与工具**（同步状态、笔记计数、查找相关内容）
 - 使用 Evernote 搜索语法进行全文搜索
@@ -151,6 +152,20 @@ Claude: 我会搜索带有该标签的笔记并排序。
 - `get_note_tag_names(guid)` - 获取笔记的标签名称
 - `list_note_versions(note_guid)` - 列出历史版本（仅高级用户）
 - `get_note_version(note_guid, update_sequence_num, ...)` - 获取特定版本（仅高级用户）
+
+### 资源/附件（13个工具）
+- `get_resource(guid, with_data, with_recognition, ...)` - 按 GUID 获取资源
+- `get_resource_data(guid, encode)` - 获取资源二进制数据（base64）
+- `get_resource_alternate_data(guid, encode)` - 获取备份数据（如 PDF 预览）
+- `get_resource_attributes(guid)` - 获取资源元数据
+- `get_resource_by_hash(note_guid, content_hash, ...)` - 按 MD5 哈希查找资源
+- `get_resource_recognition(guid, encode)` - 获取 OCR/识别数据
+- `get_resource_search_text(guid)` - 从资源获取提取的搜索文本
+- `update_resource(guid, mime, attributes)` - 更新资源元数据
+- `set_resource_application_data_entry(guid, key, value)` - 设置应用数据
+- `unset_resource_application_data_entry(guid, key)` - 删除应用数据
+- `get_resource_application_data(guid)` - 获取所有应用数据
+- `get_resource_application_data_entry(guid, key)` - 获取特定应用数据条目
 
 ### 搜索与工具（4个工具）
 - `search_notes(query, notebook_guid, limit)` - 使用 Evernote 查询语法搜索
