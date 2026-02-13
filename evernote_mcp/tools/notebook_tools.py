@@ -63,15 +63,15 @@ def register_notebook_tools(mcp: FastMCP, client):
             if stack is not None:
                 notebook.stack = stack if stack else None
 
-            updated = client.update_notebook(notebook)
+            usn = client.update_notebook(notebook)
             result = {
                 "success": True,
-                "guid": updated.guid,
-                "name": updated.name,
-                "stack": updated.stack,
-                "updated": updated.serviceUpdated,
+                "guid": notebook.guid,
+                "name": notebook.name,
+                "stack": notebook.stack,
+                "update_sequence_num": usn,
             }
-            logger.info(f"Updated notebook: {updated.name} ({updated.guid})")
+            logger.info(f"Updated notebook: {notebook.name} ({notebook.guid})")
             return __import__("json").dumps(result, indent=2, ensure_ascii=False)
         except Exception as e:
             return __import__("json").dumps(handle_evernote_error(e), indent=2)
