@@ -273,13 +273,16 @@ class EvernoteMCPClient(BaseEvernoteClient):
                              with_recognition: bool = False,
                              with_attributes: bool = True,
                              with_alternate_data: bool = False) -> Resource:
-        """Get resource by content hash."""
+        """Get resource by content hash.
+
+        Note: The Evernote API's getResourceByHash does not support withAttributes parameter.
+        Attributes are always included in the response.
+        """
         return self.note_store.getResourceByHash(
             note_guid,
             content_hash,
             withData=with_data,
             withRecognition=with_recognition,
-            withAttributes=with_attributes,
             withAlternateData=with_alternate_data,
         )
 
