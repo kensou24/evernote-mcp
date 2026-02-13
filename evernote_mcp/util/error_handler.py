@@ -63,7 +63,7 @@ def _get_edam_user_error_message(e: EDAMUserException) -> str:
         EDAMErrorCode.BAD_DATA_FORMAT: "Invalid data format",
         EDAMErrorCode.DATA_CONFLICT: "Data conflict - resource already exists",
         EDAMErrorCode.DATA_REQUIRED: "Required data is missing",
-        EDAMErrorCode.ENML_VALIDATION_FAILURE: "Invalid note content format",
+        EDAMErrorCode.ENML_VALIDATION: "Invalid note content format",
         EDAMErrorCode.LIMIT_REACHED: "Account limit reached",
         EDAMErrorCode.QUOTA_REACHED: "Upload quota reached",
         EDAMErrorCode.PERMISSION_DENIED: "Permission denied",
