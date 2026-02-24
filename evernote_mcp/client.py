@@ -1,12 +1,24 @@
 """Simplified Evernote API client for MCP server."""
 import logging
-from typing import Optional, List, Any
+import time
+from typing import Any
+
+from evernote.edam.notestore.ttypes import (
+    NoteFilter,
+    NotesMetadataResultSpec,
+    RelatedQuery,
+    RelatedResultSpec,
+)
 
 # Import from evernote-backup package (needs to be installed)
-from evernote.edam.type.ttypes import Notebook, Note, Tag, SavedSearch, Resource
-from evernote.edam.notestore.ttypes import NoteFilter, NotesMetadataResultSpec, RelatedQuery, RelatedResultSpec
-from evernote.edam.error.ttypes import EDAMUserException, EDAMSystemException, EDAMNotFoundException
-
+from evernote.edam.type.ttypes import (
+    Note,
+    NoteAttributes,
+    Notebook,
+    Resource,
+    SavedSearch,
+    Tag,
+)
 from evernote_backup.evernote_client import EvernoteClient as BaseEvernoteClient
 from evernote_backup.evernote_client_util_ssl import get_cafile_path
 
@@ -47,7 +59,7 @@ class EvernoteMCPClient(BaseEvernoteClient):
 
     # Notebook operations
 
-    def list_notebooks(self) -> List[Notebook]:
+    def list_notebooks(self) -> list[Notebook]:
         """List all notebooks."""
         return self.note_store.listNotebooks()
 
@@ -55,7 +67,7 @@ class EvernoteMCPClient(BaseEvernoteClient):
         """Get notebook by GUID."""
         return self.note_store.getNotebook(guid)
 
-    def create_notebook(self, name: str, stack: Optional[str] = None) -> Notebook:
+    def create_notebook(self, name: str, stack: str | None = None) -> Notebook:
         """Create a new notebook."""
         notebook = Notebook()
         notebook.name = name
@@ -85,7 +97,7 @@ class EvernoteMCPClient(BaseEvernoteClient):
         )
 
     def create_note(self, title: str, content: str, notebook_guid: str,
-                    tag_guids: Optional[List[str]] = None) -> Note:
+                    tag_guids: list[str] | None = None) -> Note:
         """Create a new note."""
         note = Note()
         note.title = title
@@ -114,7 +126,7 @@ class EvernoteMCPClient(BaseEvernoteClient):
         """Copy note to another notebook."""
         return self.note_store.copyNote(guid, target_notebook_guid)
 
-    def find_notes(self, query: str, notebook_guid: Optional[str] = None,
+    def find_notes(self, query: str, notebook_guid: str | None = None,
                    limit: int = 100) -> Any:
         """Search notes using Evernote's search syntax."""
         note_filter = NoteFilter()
@@ -135,7 +147,7 @@ class EvernoteMCPClient(BaseEvernoteClient):
             resultSpec=result_spec,
         )
 
-    def list_tags(self) -> List[Any]:
+    def list_tags(self) -> list[Any]:
         """List all tags."""
         return self.note_store.listTags()
 
@@ -143,7 +155,7 @@ class EvernoteMCPClient(BaseEvernoteClient):
         """Get tag by GUID."""
         return self.note_store.getTag(guid)
 
-    def create_tag(self, name: str, parent_guid: Optional[str] = None) -> Tag:
+    def create_tag(self, name: str, parent_guid: str | None = None) -> Tag:
         """Create a new tag."""
         tag = Tag()
         tag.name = name
@@ -159,7 +171,7 @@ class EvernoteMCPClient(BaseEvernoteClient):
         """Permanently delete tag."""
         return self.note_store.expungeTag(guid)
 
-    def list_tags_by_notebook(self, notebook_guid: str) -> List[Tag]:
+    def list_tags_by_notebook(self, notebook_guid: str) -> list[Tag]:
         """List all tags used in a specific notebook."""
         return self.note_store.listTagsByNotebook(notebook_guid)
 
@@ -169,7 +181,7 @@ class EvernoteMCPClient(BaseEvernoteClient):
 
     # Saved search operations
 
-    def list_searches(self) -> List[SavedSearch]:
+    def list_searches(self) -> list[SavedSearch]:
         """List all saved searches."""
         return self.note_store.listSearches()
 
@@ -203,11 +215,11 @@ class EvernoteMCPClient(BaseEvernoteClient):
         """Get extracted plain text for indexing."""
         return self.note_store.getNoteSearchText(guid, note_only, tokenize_for_indexing)
 
-    def get_note_tag_names(self, guid: str) -> List[str]:
+    def get_note_tag_names(self, guid: str) -> list[str]:
         """Get tag names for a note."""
         return self.note_store.getNoteTagNames(guid)
 
-    def list_note_versions(self, note_guid: str) -> List[Any]:
+    def list_note_versions(self, note_guid: str) -> list[Any]:
         """List previous versions of a note (Premium only)."""
         return self.note_store.listNoteVersions(note_guid)
 
@@ -313,3 +325,102 @@ class EvernoteMCPClient(BaseEvernoteClient):
     def get_resource_application_data_entry(self, guid: str, key: str) -> str:
         """Get resource application data entry."""
         return self.note_store.getResourceApplicationDataEntry(guid, key)
+
+    # Reminder operations
+
+    def set_reminder(self, note_guid: str, reminder_time: int | None = None,
+                     reminder_order: int | None = None) -> Note:
+        """Set reminder on a note.
+
+        Args:
+            note_guid: Note GUID
+            reminder_time: Unix timestamp in milliseconds (None to clear)
+            reminder_order: Order for sorting reminders (auto-generated if None)
+
+        Returns:
+            Updated note
+        """
+        note = self.get_note(note_guid, with_content=False)
+        if not note.attributes:
+            note.attributes = NoteAttributes()
+
+        note.attributes.reminderTime = reminder_time
+        if reminder_order is not None:
+            note.attributes.reminderOrder = reminder_order
+        elif reminder_time is not None and not note.attributes.reminderOrder:
+            # Auto-generate order if setting reminder for first time
+            note.attributes.reminderOrder = int(time.time() * 1000)
+
+        return self.note_store.updateNote(note)
+
+    def complete_reminder(self, note_guid: str, done_time: int | None = None) -> Note:
+        """Mark reminder as completed.
+
+        Args:
+            note_guid: Note GUID
+            done_time: Unix timestamp in milliseconds (None = now)
+
+        Returns:
+            Updated note
+        """
+        note = self.get_note(note_guid, with_content=False)
+        if not note.attributes:
+            note.attributes = NoteAttributes()
+
+        note.attributes.reminderDoneTime = done_time if done_time else int(time.time() * 1000)
+
+        return self.note_store.updateNote(note)
+
+    def clear_reminder(self, note_guid: str) -> Note:
+        """Clear all reminder fields from a note.
+
+        Args:
+            note_guid: Note GUID
+
+        Returns:
+            Updated note
+        """
+        note = self.get_note(note_guid, with_content=False)
+        if note.attributes:
+            note.attributes.reminderTime = None
+            note.attributes.reminderDoneTime = None
+            note.attributes.reminderOrder = None
+
+        return self.note_store.updateNote(note)
+
+    def find_reminders(self, notebook_guid: str | None = None, limit: int = 100,
+                       include_completed: bool = False) -> Any:
+        """Find notes with reminders.
+
+        Args:
+            notebook_guid: Optional notebook to search
+            limit: Maximum results
+            include_completed: Include completed reminders
+
+        Returns:
+            NotesMetadataList with reminder notes
+        """
+        note_filter = NoteFilter()
+
+        # Search for notes with reminders
+        if include_completed:
+            note_filter.words = "reminderTime:*"
+        else:
+            note_filter.words = "reminderTime:* -reminderDoneTime:*"
+
+        if notebook_guid:
+            note_filter.notebookGuid = notebook_guid
+
+        result_spec = NotesMetadataResultSpec()
+        result_spec.includeTitle = True
+        result_spec.includeUpdated = True
+        result_spec.includeNotebookGuid = True
+        result_spec.includeAttributes = True  # Need attributes for reminder info
+
+        return self.note_store.findNotesMetadata(
+            filter=note_filter,
+            offset=0,
+            maxNotes=limit,
+            resultSpec=result_spec,
+        )
+

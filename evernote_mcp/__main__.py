@@ -25,6 +25,7 @@ def main():
     from evernote_mcp.tools.note_advanced_tools import register_note_advanced_tools
     from evernote_mcp.tools.sync_tools import register_sync_tools
     from evernote_mcp.tools.resource_tools import register_resource_tools
+    from evernote_mcp.tools.reminder_tools import register_reminder_tools
     from evernote_mcp.resources.notebook_resource import register_notebook_resources
     from evernote_mcp.resources.note_resource import register_note_resources
 
@@ -59,6 +60,7 @@ def main():
     register_note_advanced_tools(mcp, client)
     register_sync_tools(mcp, client)
     register_resource_tools(mcp, client)
+    register_reminder_tools(mcp, client)
 
     # Register all resources
     register_notebook_resources(mcp, client)

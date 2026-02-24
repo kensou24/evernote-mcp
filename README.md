@@ -169,6 +169,13 @@ Claude: I'll search for notes with that tag and sort them.
 - `get_resource_application_data(guid)` - Get all application data
 - `get_resource_application_data_entry(guid, key)` - Get specific app data entry
 
+### Reminders (5 tools)
+- `set_reminder(note_guid, reminder_time, reminder_order)` - Set reminder on a note
+- `complete_reminder(note_guid, done_time)` - Mark reminder as completed
+- `clear_reminder(note_guid)` - Clear all reminder fields from a note
+- `list_reminders(notebook_guid, limit, include_completed)` - List notes with reminders
+- `get_reminder(note_guid)` - Get reminder info for a specific note
+
 ### Search & Utilities (4 tools)
 - `search_notes(query, notebook_guid, limit)` - Search using Evernote query syntax
 - `get_sync_state()` - Get sync state information

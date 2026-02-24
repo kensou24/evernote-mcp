@@ -169,6 +169,13 @@ Claude: 我会搜索带有该标签的笔记并排序。
 - `get_resource_application_data(guid)` - 获取所有应用数据
 - `get_resource_application_data_entry(guid, key)` - 获取特定应用数据条目
 
+### 提醒（5个工具）
+- `set_reminder(note_guid, reminder_time, reminder_order)` - 在笔记上设置提醒
+- `complete_reminder(note_guid, done_time)` - 将提醒标记为已完成
+- `clear_reminder(note_guid)` - 清除笔记上的所有提醒字段
+- `list_reminders(notebook_guid, limit, include_completed)` - 列出带有提醒的笔记
+- `get_reminder(note_guid)` - 获取特定笔记的提醒信息
+
 ### 搜索与工具（4个工具）
 - `search_notes(query, notebook_guid, limit)` - 使用 Evernote 查询语法搜索
 - `get_sync_state()` - 获取同步状态信息
