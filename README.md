@@ -109,6 +109,8 @@ Claude: I'll search for notes with that tag and sort them.
 |----------|---------|-------------|
 | `EVERNOTE_AUTH_TOKEN` | - | Your developer token (required) |
 | `EVERNOTE_BACKEND` | `evernote` | `evernote` (International) or `china` (印象笔记) |
+| `EVERNOTE_RETRY_COUNT` | `5` | Network retry count on failure |
+| `EVERNOTE_USE_SYSTEM_SSL_CA` | `false` | Use system SSL CA certificates |
 
 ## Available Tools
 

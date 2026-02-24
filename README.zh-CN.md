@@ -109,6 +109,8 @@ Claude: 我会搜索带有该标签的笔记并排序。
 |----------|---------|-------------|
 | `EVERNOTE_AUTH_TOKEN` | - | 您的开发者令牌（必需） |
 | `EVERNOTE_BACKEND` | `evernote` | `evernote`（国际版）或 `china`（印象笔记） |
+| `EVERNOTE_RETRY_COUNT` | `5` | 网络失败时的重试次数 |
+| `EVERNOTE_USE_SYSTEM_SSL_CA` | `false` | 使用系统 SSL CA 证书 |
 
 ## 可用工具
 
