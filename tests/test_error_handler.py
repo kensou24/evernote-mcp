@@ -28,7 +28,7 @@ class TestHandleEvernoteError:
         assert data["success"] is False
         assert "error" in data
         assert data["error_code"] == EDAMErrorCode.BAD_DATA_FORMAT
-        assert "notebook_name" in data["parameter"]
+        # Note: parameter field is no longer included to avoid leaking internal details
 
     def test_edam_user_error_bad_data_format(self):
         """Test error message for BAD_DATA_FORMAT."""
@@ -139,7 +139,7 @@ class TestHandleEvernoteError:
         # BAD_DATA_FORMAT is a known code, so it returns specific message
         assert "Invalid data format" in data["error"]
     def test_edam_user_error_with_parameter(self):
-        """Test that parameter is included in error message."""
+        """Test that parameter is NOT included in error message (security fix)."""
         exc = EDAMUserException(
             errorCode=EDAMErrorCode.BAD_DATA_FORMAT,
             parameter="title",
@@ -148,8 +148,10 @@ class TestHandleEvernoteError:
         result = handle_evernote_error(exc)
         data = result
 
-        assert "title" in data["error"]
-        assert data["parameter"] == "title"
+        # Parameter should not be exposed in error message
+        assert "title" not in data["error"]
+        # parameter field should not exist in response
+        assert "parameter" not in data
 
     def test_handles_edam_system_exception(self):
         """Test handling EDAMSystemException."""
@@ -213,17 +215,46 @@ class TestHandleEvernoteError:
         assert isinstance(data["error"], str)
 
     def test_does_not_expose_auth_token(self):
-        """Test that auth tokens are not exposed in error messages."""
-        # Simulate an error that might contain sensitive data
+        """Test that auth tokens are redacted from error messages."""
+        # Test Evernote token format: S=<signature>:<userid>:<timestamp>
         exc = Exception("Failed with token:S=123:ABC123XYZ")
 
         result = handle_evernote_error(exc)
         data = result
 
-        # The error message is included but we should check it's not enhanced
-        assert "S=123" in data["error"]
-        # In production, we'd want to sanitize, but current implementation passes through
-        # This test documents current behavior
+        # Token should be redacted
+        assert "S=123" not in data["error"]
+        assert "ABC123XYZ" not in data["error"]
+        assert "[REDACTED]" in data["error"]
+
+    def test_redacts_token_without_keyword(self):
+        """Test that tokens without 'token:' prefix are also redacted."""
+        exc = Exception("Authentication failed: S=456:DEF456:1234567890")
+
+        result = handle_evernote_error(exc)
+        data = result
+
+        assert "S=456" not in data["error"]
+        assert "[REDACTED]" in data["error"]
+
+    def test_redacts_password_in_error(self):
+        """Test that passwords are redacted from error messages."""
+        exc = Exception("Invalid credentials with password:secret123")
+
+        result = handle_evernote_error(exc)
+        data = result
+
+        assert "secret123" not in data["error"]
+        assert "[REDACTED]" in data["error"]
+
+    def test_does_not_redact_safe_messages(self):
+        """Test that normal error messages are not affected."""
+        exc = Exception("Note not found")
+
+        result = handle_evernote_error(exc)
+        data = result
+
+        assert data["error"] == "Note not found"
 
 
 if __name__ == "__main__":

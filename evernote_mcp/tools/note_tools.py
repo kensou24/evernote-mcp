@@ -7,6 +7,13 @@ from evernote.edam.error.ttypes import EDAMNotFoundException
 
 from evernote_mcp.util.enml_converter import enml_to_text, enml_to_markdown, text_to_enml
 from evernote_mcp.util.error_handler import handle_evernote_error
+from evernote_mcp.util.validators import (
+    ValidationError,
+    validate_title,
+    validate_content,
+    validate_tags,
+    validate_limit,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -26,16 +33,21 @@ def register_note_tools(mcp: FastMCP, client):
         Create a new note in Evernote.
 
         Args:
-            title: Note title (required)
-            content: Note content (required)
+            title: Note title (required, max 255 characters)
+            content: Note content (required, max 10MB for text, 50MB for ENML)
             notebook_guid: Target notebook GUID (required)
-            tags: Optional list of tag names to assign
+            tags: Optional list of tag names to assign (max 100 tags)
             format: Content format - 'text' (default) or 'enml'
 
         Returns:
             JSON string with created note info including GUID
         """
         try:
+            # Validate inputs
+            validate_title(title)
+            validate_content(content, is_enml=(format == "enml"))
+            validate_tags(tags)
+
             # Convert content to ENML if needed
             enml_content = content if format == "enml" else text_to_enml(content)
 
@@ -53,8 +65,10 @@ def register_note_tools(mcp: FastMCP, client):
                 "notebook_guid": note.notebookGuid,
                 "created": note.created,
             }
-            logger.info(f"Created note: {note.title} ({note.guid})")
+            logger.info(f"Created note: {note.guid}")
             return json.dumps(result, indent=2, ensure_ascii=False)
+        except ValidationError:
+            raise
         except Exception as e:
             return json.dumps(handle_evernote_error(e), indent=2)
 
@@ -132,14 +146,20 @@ def register_note_tools(mcp: FastMCP, client):
 
         Args:
             guid: Note GUID (required)
-            title: New title (optional)
-            content: New content (optional)
+            title: New title (optional, max 255 characters)
+            content: New content (optional, max 10MB for text, 50MB for ENML)
             format: Content format - 'text' (default) or 'enml'
 
         Returns:
             JSON string with updated note info
         """
         try:
+            # Validate inputs if provided
+            if title:
+                validate_title(title)
+            if content:
+                validate_content(content, is_enml=(format == "enml"))
+
             note = client.get_note(guid, with_content=False)
             if title:
                 note.title = title
@@ -154,8 +174,10 @@ def register_note_tools(mcp: FastMCP, client):
                 "title": updated.title,
                 "updated": updated.updated,
             }
-            logger.info(f"Updated note: {updated.title} ({updated.guid})")
+            logger.info(f"Updated note: {updated.guid}")
             return json.dumps(result, indent=2, ensure_ascii=False)
+        except ValidationError:
+            raise
         except Exception as e:
             return json.dumps(handle_evernote_error(e), indent=2)
 
@@ -266,12 +288,14 @@ def register_note_tools(mcp: FastMCP, client):
 
         Args:
             notebook_guid: Optional notebook GUID to filter
-            limit: Maximum number of notes to return (default: 100)
+            limit: Maximum number of notes to return (default: 100, max 250)
 
         Returns:
             JSON string with list of notes
         """
         try:
+            validate_limit(limit)
+
             # Use empty search to list all notes
             query = "" if not notebook_guid else ""
             result = client.find_notes(query, notebook_guid, limit)
@@ -294,5 +318,7 @@ def register_note_tools(mcp: FastMCP, client):
                 "notes": notes_data,
             }
             return json.dumps(response, indent=2, ensure_ascii=False)
+        except ValidationError:
+            raise
         except Exception as e:
             return json.dumps(handle_evernote_error(e), indent=2)

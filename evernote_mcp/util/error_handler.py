@@ -1,5 +1,6 @@
 """Error handling utilities for Evernote MCP server."""
 import logging
+import re
 from typing import Any, Dict
 from evernote.edam.error.ttypes import (
     EDAMErrorCode,
@@ -10,6 +11,39 @@ from evernote.edam.error.ttypes import (
 
 logger = logging.getLogger(__name__)
 
+# Pattern to match Evernote auth tokens in error messages
+# Format: S=<signature>:<userid>:<timestamp> etc.
+_AUTH_TOKEN_PATTERN = re.compile(
+    r'(token[:\s]*)?S=[\w:/=+-]+',
+    re.IGNORECASE
+)
+
+
+def _redact_sensitive_info(message: str) -> str:
+    """Redact sensitive information (auth tokens, passwords) from error messages.
+
+    Args:
+        message: Original error message
+
+    Returns:
+        Error message with sensitive info redacted
+    """
+    # First redact Evernote auth tokens (S=...)
+    message = _AUTH_TOKEN_PATTERN.sub('[REDACTED]', message)
+
+    # Then redact common password/secret patterns
+    # Use word boundaries to avoid matching "token" in "Authentication"
+    message = re.sub(r'(?i)(password|secret|api_key)([:\s][^\s\'"]+)?',
+                     r'\1: [REDACTED]', message)
+
+    # Avoid redacting "token" when it's part of a legitimate error message
+    # Only redact if it looks like a value assignment (token: value or token=value)
+    # This prevents redacting "Invalid authentication token"
+    message = re.sub(r'(?i)(auth\s*token|bearer\s*token)([:\s=][^\s\'"]+)?',
+                     r'\1: [REDACTED]', message)
+
+    return message
+
 
 def handle_evernote_error(e: Exception) -> Dict[str, Any]:
     """Convert Evernote API exceptions to standardized error responses.
@@ -18,22 +52,21 @@ def handle_evernote_error(e: Exception) -> Dict[str, Any]:
         e: The exception to handle
 
     Returns:
-        Dictionary with success=False and error details
+        Dictionary with success=False and error details (with sensitive info redacted)
     """
     if isinstance(e, EDAMUserException):
         error_message = _get_edam_user_error_message(e)
         logger.error(f"EDAMUserException: {error_message}")
         return {
             "success": False,
-            "error": error_message,
+            "error": _redact_sensitive_info(error_message),
             "error_code": e.errorCode,
-            "parameter": getattr(e, 'parameter', None)
         }
     elif isinstance(e, EDAMSystemException):
         logger.error(f"EDAMSystemException: {e.message}")
         return {
             "success": False,
-            "error": f"System error: {e.message}",
+            "error": _redact_sensitive_info(f"System error: {e.message}"),
             "error_code": e.errorCode,
         }
     elif isinstance(e, EDAMNotFoundException):
@@ -43,10 +76,11 @@ def handle_evernote_error(e: Exception) -> Dict[str, Any]:
             "error": f"Resource not found: {e.identifier}",
         }
     else:
-        logger.error(f"Unexpected error: {type(e).__name__}: {e}")
+        error_msg = str(e)
+        logger.error(f"Unexpected error: {type(e).__name__}: {_redact_sensitive_info(error_msg)}")
         return {
             "success": False,
-            "error": str(e),
+            "error": _redact_sensitive_info(error_msg),
         }
 
 
@@ -57,7 +91,7 @@ def _get_edam_user_error_message(e: EDAMUserException) -> str:
         e: EDAMUserException
 
     Returns:
-        Human-readable error message
+        Human-readable error message (without sensitive parameter details)
     """
     error_messages = {
         EDAMErrorCode.BAD_DATA_FORMAT: "Invalid data format",
@@ -73,8 +107,7 @@ def _get_edam_user_error_message(e: EDAMUserException) -> str:
 
     base_message = error_messages.get(e.errorCode, f"Unknown error (code: {e.errorCode})")
 
-    parameter = getattr(e, 'parameter', None)
-    if parameter:
-        return f"{base_message}: {parameter}"
+    # Note: We no longer include the parameter in the error message to avoid
+    # leaking internal implementation details or potentially sensitive data
 
     return base_message
