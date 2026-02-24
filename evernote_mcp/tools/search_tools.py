@@ -5,6 +5,11 @@ import json
 from mcp.server.fastmcp import FastMCP
 
 from evernote_mcp.util.error_handler import handle_evernote_error
+from evernote_mcp.util.validators import (
+    ValidationError,
+    validate_search_query,
+    validate_limit,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -31,14 +36,17 @@ def register_search_tools(mcp: FastMCP, client):
         - 'encryption:true' - encrypted notes
 
         Args:
-            query: Evernote search query
+            query: Evernote search query (max 1000 characters)
             notebook_guid: Optional notebook GUID to limit search
-            limit: Maximum number of results (default: 100)
+            limit: Maximum number of results (default: 100, max 250)
 
         Returns:
             JSON string with search results
         """
         try:
+            validate_search_query(query)
+            validate_limit(limit)
+
             result = client.find_notes(query, notebook_guid, limit)
             notes_list = result.notes if hasattr(result, 'notes') else []
 
@@ -64,8 +72,10 @@ def register_search_tools(mcp: FastMCP, client):
                 "query": query,
                 "notes": notes_data,
             }
-            logger.info(f"Search '{query}' found {total} note(s)")
+            logger.info(f"Search found {total} note(s)")
             return json.dumps(response, indent=2, ensure_ascii=False)
+        except ValidationError:
+            raise
         except Exception as e:
             return json.dumps(handle_evernote_error(e), indent=2)
 

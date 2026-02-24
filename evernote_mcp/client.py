@@ -52,9 +52,9 @@ class EvernoteMCPClient(BaseEvernoteClient):
         # Verify connection on initialization
         try:
             self.verify_token()
-            logger.info(f"Successfully authenticated as {self.user}")
+            logger.info("Successfully authenticated to Evernote API")
         except Exception as e:
-            logger.error(f"Authentication failed: {e}")
+            logger.error("Authentication failed")
             raise
 
     # Notebook operations
