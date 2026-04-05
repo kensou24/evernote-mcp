@@ -22,6 +22,8 @@ from evernote.edam.type.ttypes import (
 from evernote_backup.evernote_client import EvernoteClient as BaseEvernoteClient
 from evernote_backup.evernote_client_util_ssl import get_cafile_path
 
+from evernote_mcp.util.error_handler import _redact_sensitive_info
+
 logger = logging.getLogger(__name__)
 
 
@@ -54,7 +56,7 @@ class EvernoteMCPClient(BaseEvernoteClient):
             self.verify_token()
             logger.info("Successfully authenticated to Evernote API")
         except Exception as e:
-            logger.error("Authentication failed")
+            logger.error("Authentication failed: %s", _redact_sensitive_info(str(e)))
             raise
 
     # Notebook operations

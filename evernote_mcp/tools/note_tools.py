@@ -296,9 +296,7 @@ def register_note_tools(mcp: FastMCP, client):
         try:
             validate_limit(limit)
 
-            # Use empty search to list all notes
-            query = "" if not notebook_guid else ""
-            result = client.find_notes(query, notebook_guid, limit)
+            result = client.find_notes("", notebook_guid, limit)
 
             notes_list = result.notes if hasattr(result, 'notes') else []
             notes_data = []

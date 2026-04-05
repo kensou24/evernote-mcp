@@ -27,9 +27,17 @@ class EvernoteConfig:
         if backend not in ("evernote", "china", "china:sandbox"):
             raise ValueError(f"Invalid backend: {backend}")
 
+        try:
+            retry_count = int(os.getenv("EVERNOTE_RETRY_COUNT", "5"))
+        except ValueError:
+            raise ValueError(
+                "EVERNOTE_RETRY_COUNT must be an integer, "
+                f"got: {os.getenv('EVERNOTE_RETRY_COUNT')!r}"
+            )
+
         return cls(
             auth_token=auth_token,
             backend=backend,
-            network_retry_count=int(os.getenv("EVERNOTE_RETRY_COUNT", "5")),
+            network_retry_count=retry_count,
             use_system_ssl_ca=os.getenv("EVERNOTE_USE_SYSTEM_SSL_CA", "false").lower() == "true",
         )
