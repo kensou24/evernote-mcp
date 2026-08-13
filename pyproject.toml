@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [project]
 name = "evernote-mcp"
-version = "0.4.0"
+version = "0.4.1"
 description = "Model Context Protocol (MCP) server for Evernote operations"
 authors = [
     { name = "king", email = "king@example.com" }
@@ -23,7 +23,7 @@ classifiers = [
 requires-python = ">=3.10,<4.0"
 dependencies = [
     "mcp>=2,<3",
-    "evernote-backup>=1.0.0",
+    "evernote-backup>=1.0.0,<1.14.0",
     "python-dotenv>=1.0.0",
 ]
 

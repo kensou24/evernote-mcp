@@ -465,7 +465,7 @@ wheels = [
 
 [[package]]
 name = "evernote-mcp"
-version = "0.4.0"
+version = "0.4.1"
 source = { editable = "." }
 dependencies = [
     { name = "evernote-backup" },
@@ -483,7 +483,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "evernote-backup", specifier = ">=1.0.0" },
+    { name = "evernote-backup", specifier = ">=1.0.0,<1.14.0" },
     { name = "mcp", specifier = ">=2,<3" },
     { name = "python-dotenv", specifier = ">=1.0.0" },
 ]
