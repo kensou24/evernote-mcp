@@ -2,7 +2,7 @@
 import logging
 from typing import Optional
 import json
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 
 from evernote_mcp.util.error_handler import handle_evernote_error
 from evernote_mcp.util.validators import (
@@ -14,7 +14,7 @@ from evernote_mcp.util.validators import (
 logger = logging.getLogger(__name__)
 
 
-def register_search_tools(mcp: FastMCP, client):
+def register_search_tools(mcp: MCPServer, client):
     """Register search-related MCP tools."""
 
     @mcp.tool()

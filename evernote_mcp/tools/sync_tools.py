@@ -1,7 +1,7 @@
 """MCP tools for sync and utility operations."""
 import logging
 import json
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 from evernote.edam.notestore.ttypes import RelatedQuery, RelatedResultSpec
 
 from evernote_mcp.util.error_handler import handle_evernote_error
@@ -9,7 +9,7 @@ from evernote_mcp.util.error_handler import handle_evernote_error
 logger = logging.getLogger(__name__)
 
 
-def register_sync_tools(mcp: FastMCP, client):
+def register_sync_tools(mcp: MCPServer, client):
     """Register sync and utility-related MCP tools."""
 
     @mcp.tool()

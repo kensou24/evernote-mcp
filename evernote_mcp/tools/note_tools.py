@@ -2,7 +2,7 @@
 import logging
 from typing import Optional, List
 import json
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 from evernote.edam.error.ttypes import EDAMNotFoundException
 
 from evernote_mcp.util.enml_converter import enml_to_text, enml_to_markdown, text_to_enml
@@ -18,7 +18,7 @@ from evernote_mcp.util.validators import (
 logger = logging.getLogger(__name__)
 
 
-def register_note_tools(mcp: FastMCP, client):
+def register_note_tools(mcp: MCPServer, client):
     """Register note-related MCP tools."""
 
     @mcp.tool()

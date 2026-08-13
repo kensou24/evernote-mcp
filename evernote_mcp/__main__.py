@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 def main():
     """Start the Evernote MCP server."""
-    from mcp.server.fastmcp import FastMCP
+    from mcp.server.mcpserver import MCPServer
 
     from evernote_mcp.config import EvernoteConfig
     from evernote_mcp.client import EvernoteMCPClient
@@ -48,8 +48,8 @@ def main():
         logger.error(f"Failed to initialize Evernote client: {e}")
         sys.exit(1)
 
-    # Create FastMCP server
-    mcp = FastMCP("evernote-mcp")
+    # Create MCPServer
+    mcp = MCPServer("evernote-mcp")
 
     # Register all tools
     register_notebook_tools(mcp, client)

@@ -4,7 +4,7 @@ import json
 from unittest.mock import MagicMock, patch
 
 import pytest
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 
 from evernote_mcp.client import EvernoteMCPClient
 from evernote_mcp.tools.reminder_tools import register_reminder_tools
@@ -158,7 +158,7 @@ class TestReminderTools:
 
     @pytest.fixture
     def mcp(self):
-        return FastMCP("test")
+        return MCPServer("test")
 
     def test_set_reminder_tool(self, mock_client, mcp):
         register_reminder_tools(mcp, mock_client)

@@ -3,14 +3,14 @@
 import json
 import logging
 
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 
 from evernote_mcp.util.error_handler import handle_evernote_error
 
 logger = logging.getLogger(__name__)
 
 
-def register_reminder_tools(mcp: FastMCP, client):
+def register_reminder_tools(mcp: MCPServer, client):
     """Register reminder-related MCP tools."""
 
     @mcp.tool()

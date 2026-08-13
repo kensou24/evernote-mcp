@@ -5,7 +5,7 @@ import binascii
 from unittest.mock import MagicMock
 
 import pytest
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 
 from evernote_mcp.tools.resource_tools import register_resource_tools
 
@@ -66,7 +66,7 @@ class TestResourceTools:
 
     @pytest.fixture
     def mcp(self):
-        return FastMCP("test")
+        return MCPServer("test")
 
     def test_get_resource_basic(self, mock_client, mcp):
         register_resource_tools(mcp, mock_client)
@@ -354,7 +354,7 @@ class TestResourceToolsErrorHandling:
 
     @pytest.fixture
     def mcp(self):
-        return FastMCP("test")
+        return MCPServer("test")
 
     def test_get_resource_handles_error(self, mock_client, mcp):
         register_resource_tools(mcp, mock_client)

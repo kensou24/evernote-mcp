@@ -4,7 +4,7 @@ import json
 from unittest.mock import MagicMock
 
 import pytest
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 
 from evernote_mcp.tools.sync_tools import register_sync_tools
 
@@ -64,7 +64,7 @@ class TestSyncTools:
 
     @pytest.fixture
     def mcp(self):
-        return FastMCP("test")
+        return MCPServer("test")
 
     def test_get_sync_state(self, mock_client, mcp):
         register_sync_tools(mcp, mock_client)
@@ -261,7 +261,7 @@ class TestSyncToolsErrorHandling:
 
     @pytest.fixture
     def mcp(self):
-        return FastMCP("test")
+        return MCPServer("test")
 
     def test_get_sync_state_handles_error(self, mock_client, mcp):
         register_sync_tools(mcp, mock_client)

@@ -2,7 +2,7 @@
 import logging
 from typing import Optional
 import json
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 
 from evernote_mcp.util.error_handler import handle_evernote_error
 
@@ -20,7 +20,7 @@ def serialize_scope(scope) -> Optional[dict]:
     }
 
 
-def register_search_tools_extended(mcp: FastMCP, client):
+def register_search_tools_extended(mcp: MCPServer, client):
     """Register saved search-related MCP tools."""
 
     @mcp.tool()

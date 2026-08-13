@@ -4,7 +4,7 @@ import json
 from unittest.mock import MagicMock
 
 import pytest
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 
 from evernote_mcp.tools.search_tools import register_search_tools
 
@@ -50,7 +50,7 @@ class TestSearchTools:
 
     @pytest.fixture
     def mcp(self):
-        return FastMCP("test")
+        return MCPServer("test")
 
     def test_search_notes_basic(self, mock_client, mcp):
         register_search_tools(mcp, mock_client)
@@ -211,7 +211,7 @@ class TestSearchToolsErrorHandling:
 
     @pytest.fixture
     def mcp(self):
-        return FastMCP("test")
+        return MCPServer("test")
 
     def test_search_notes_handles_error(self, mock_client, mcp):
         register_search_tools(mcp, mock_client)

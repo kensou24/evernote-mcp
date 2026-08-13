@@ -1,7 +1,7 @@
 """MCP resources for notes."""
 import logging
 import json
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 from evernote.edam.error.ttypes import EDAMNotFoundException
 
 from evernote_mcp.util.enml_converter import enml_to_text, enml_to_markdown
@@ -10,7 +10,7 @@ from evernote_mcp.util.error_handler import handle_evernote_error
 logger = logging.getLogger(__name__)
 
 
-def register_note_resources(mcp: FastMCP, client):
+def register_note_resources(mcp: MCPServer, client):
     """Register note resources."""
 
     @mcp.resource("file://note/{guid}")

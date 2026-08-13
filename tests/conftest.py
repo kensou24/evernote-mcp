@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 from typing import Generator
 
 import pytest
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 
 from evernote_mcp.client import EvernoteMCPClient
 from evernote_mcp.config import EvernoteConfig
@@ -145,9 +145,9 @@ def mock_client() -> Generator[EvernoteMCPClient, None, None]:
 
 
 @pytest.fixture
-def mcp_server() -> FastMCP:
-    """Create a FastMCP server instance for testing."""
-    return FastMCP("test-evernote-mcp")
+def mcp_server() -> MCPServer:
+    """Create an MCPServer instance for testing."""
+    return MCPServer("test-evernote-mcp")
 
 
 @pytest.fixture

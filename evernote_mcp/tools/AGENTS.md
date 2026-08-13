@@ -35,7 +35,7 @@ tools/
 
 ### Registration Pattern
 ```python
-def register_xxx_tools(mcp: FastMCP, client):
+def register_xxx_tools(mcp: MCPServer, client):
     @mcp.tool()
     def tool_name(param: type) -> str:
         """Docstring for MCP tool registry."""

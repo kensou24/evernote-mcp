@@ -3,7 +3,7 @@
 from unittest.mock import MagicMock
 
 import pytest
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 
 from evernote_mcp.tools.notebook_tools import register_notebook_tools
 
@@ -47,7 +47,7 @@ class TestNotebookToolsIntegration:
 
     @pytest.fixture
     def mcp(self):
-        return FastMCP("test")
+        return MCPServer("test")
 
     def test_create_notebook_success(self, mock_client, mcp):
         register_notebook_tools(mcp, mock_client)

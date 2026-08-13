@@ -2,14 +2,14 @@
 import logging
 from typing import Optional
 import json
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 
 from evernote_mcp.util.error_handler import handle_evernote_error
 
 logger = logging.getLogger(__name__)
 
 
-def register_tag_tools(mcp: FastMCP, client):
+def register_tag_tools(mcp: MCPServer, client):
     """Register tag-related MCP tools."""
 
     @mcp.tool()

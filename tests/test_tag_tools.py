@@ -4,7 +4,7 @@ import json
 from unittest.mock import MagicMock
 
 import pytest
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 
 from evernote_mcp.tools.tag_tools import register_tag_tools
 
@@ -43,7 +43,7 @@ class TestTagTools:
 
     @pytest.fixture
     def mcp(self):
-        return FastMCP("test")
+        return MCPServer("test")
 
     def test_get_tag_tool(self, mock_client, mcp):
         register_tag_tools(mcp, mock_client)
@@ -227,7 +227,7 @@ class TestTagToolsErrorHandling:
 
     @pytest.fixture
     def mcp(self):
-        return FastMCP("test")
+        return MCPServer("test")
 
     def test_get_tag_handles_error(self, mock_client, mcp):
         register_tag_tools(mcp, mock_client)

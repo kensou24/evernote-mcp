@@ -4,7 +4,7 @@ import json
 from unittest.mock import MagicMock
 
 import pytest
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 
 from evernote_mcp.tools.note_advanced_tools import register_note_advanced_tools
 
@@ -46,7 +46,7 @@ class TestNoteAdvancedTools:
 
     @pytest.fixture
     def mcp(self):
-        return FastMCP("test")
+        return MCPServer("test")
 
     def test_get_note_content(self, mock_client, mcp):
         register_note_advanced_tools(mcp, mock_client)
@@ -282,7 +282,7 @@ class TestNoteAdvancedToolsErrorHandling:
 
     @pytest.fixture
     def mcp(self):
-        return FastMCP("test")
+        return MCPServer("test")
 
     def test_get_note_content_handles_error(self, mock_client, mcp):
         register_note_advanced_tools(mcp, mock_client)

@@ -15,7 +15,7 @@ import os
 import time
 
 import pytest
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 
 from evernote_mcp.client import EvernoteMCPClient
 from evernote_mcp.tools.notebook_tools import register_notebook_tools
@@ -60,9 +60,9 @@ def real_client() -> EvernoteMCPClient:
 
 
 @pytest.fixture
-def mcp_server() -> FastMCP:
-    """Create a FastMCP server for testing."""
-    return FastMCP("test-evernote-mcp")
+def mcp_server() -> MCPServer:
+    """Create an MCPServer for testing."""
+    return MCPServer("test-evernote-mcp")
 
 
 # ============================================================================
@@ -94,7 +94,7 @@ class TestConnectionAndSync:
 class TestNotebookTools:
     """Test all notebook MCP tools with real API."""
 
-    def test_list_notebooks_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_list_notebooks_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test list_notebooks MCP tool."""
         register_notebook_tools(mcp_server, real_client)
 
@@ -107,7 +107,7 @@ class TestNotebookTools:
         assert "notebooks" in data
         print(f"Found {len(data['notebooks'])} notebooks")
 
-    def test_get_notebook_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_get_notebook_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test get_notebook MCP tool."""
         register_notebook_tools(mcp_server, real_client)
 
@@ -123,7 +123,7 @@ class TestNotebookTools:
         assert data["name"] == default_nb.name
         print(f"Got notebook: {data['name']}")
 
-    def test_create_notebook_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_create_notebook_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test create_notebook MCP tool."""
         register_notebook_tools(mcp_server, real_client)
 
@@ -142,7 +142,7 @@ class TestNotebookTools:
         real_client.expunge_notebook(data["guid"])
         print(f"Created and deleted notebook: {test_name}")
 
-    def test_update_notebook_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_update_notebook_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test update_notebook MCP tool."""
         register_notebook_tools(mcp_server, real_client)
 
@@ -161,7 +161,7 @@ class TestNotebookTools:
         real_client.expunge_notebook(notebook.guid)
         print(f"Updated notebook to: {new_name}")
 
-    def test_delete_notebook_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_delete_notebook_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test delete_notebook MCP tool."""
         register_notebook_tools(mcp_server, real_client)
 
@@ -185,7 +185,7 @@ class TestNotebookTools:
 class TestNoteTools:
     """Test all note MCP tools with real API."""
 
-    def test_list_notes_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_list_notes_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test list_notes MCP tool."""
         register_note_tools(mcp_server, real_client)
 
@@ -199,7 +199,7 @@ class TestNoteTools:
         assert data["success"] is True
         print(f"Listed {data['count']} notes")
 
-    def test_get_note_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_get_note_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test get_note MCP tool."""
         register_note_tools(mcp_server, real_client)
 
@@ -223,7 +223,7 @@ class TestNoteTools:
         real_client.expunge_note(note.guid)
         print("get_note tool test passed")
 
-    def test_create_note_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_create_note_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test create_note MCP tool."""
         register_note_tools(mcp_server, real_client)
 
@@ -245,7 +245,7 @@ class TestNoteTools:
         real_client.expunge_note(data["guid"])
         print(f"Created note: {test_title}")
 
-    def test_update_note_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_update_note_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test update_note MCP tool."""
         register_note_tools(mcp_server, real_client)
 
@@ -269,7 +269,7 @@ class TestNoteTools:
         real_client.expunge_note(note.guid)
         print("update_note tool test passed")
 
-    def test_delete_note_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_delete_note_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test delete_note MCP tool."""
         register_note_tools(mcp_server, real_client)
 
@@ -293,7 +293,7 @@ class TestNoteTools:
         real_client.expunge_note(note_guid)
         print("delete_note tool test passed")
 
-    def test_copy_note_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_copy_note_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test copy_note MCP tool."""
         register_note_tools(mcp_server, real_client)
 
@@ -329,7 +329,7 @@ class TestNoteTools:
 class TestTagTools:
     """Test all tag MCP tools with real API."""
 
-    def test_list_tags_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_list_tags_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test list_tags MCP tool."""
         register_search_tools(mcp_server, real_client)
 
@@ -342,7 +342,7 @@ class TestTagTools:
             assert data["success"] is True
             print(f"Listed {len(data['tags'])} tags")
 
-    def test_get_tag_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_get_tag_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test get_tag MCP tool."""
         register_tag_tools(mcp_server, real_client)
 
@@ -361,7 +361,7 @@ class TestTagTools:
         real_client.expunge_tag(tag.guid)
         print("get_tag tool test passed")
 
-    def test_create_tag_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_create_tag_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test create_tag MCP tool."""
         register_tag_tools(mcp_server, real_client)
 
@@ -379,7 +379,7 @@ class TestTagTools:
         real_client.expunge_tag(data["guid"])
         print(f"Created tag: {tag_name}")
 
-    def test_update_tag_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_update_tag_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test update_tag MCP tool."""
         register_tag_tools(mcp_server, real_client)
 
@@ -398,7 +398,7 @@ class TestTagTools:
         real_client.expunge_tag(tag.guid)
         print("update_tag tool test passed")
 
-    def test_expunge_tag_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_expunge_tag_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test expunge_tag MCP tool."""
         register_tag_tools(mcp_server, real_client)
 
@@ -414,7 +414,7 @@ class TestTagTools:
         assert data["success"] is True
         print("expunge_tag tool test passed")
 
-    def test_list_tags_by_notebook_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_list_tags_by_notebook_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test list_tags_by_notebook MCP tool."""
         register_tag_tools(mcp_server, real_client)
 
@@ -428,7 +428,7 @@ class TestTagTools:
         assert data["success"] is True
         print(f"Tags in default notebook: {len(data['tags'])}")
 
-    def test_untag_all_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_untag_all_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test untag_all MCP tool."""
         register_tag_tools(mcp_server, real_client)
 
@@ -464,7 +464,7 @@ class TestTagTools:
 class TestSearchTools:
     """Test all search MCP tools with real API."""
 
-    def test_search_notes_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_search_notes_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test search_notes MCP tool."""
         register_search_tools(mcp_server, real_client)
 
@@ -484,7 +484,7 @@ class TestSearchTools:
 class TestSavedSearchTools:
     """Test all saved search MCP tools with real API."""
 
-    def test_list_searches_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_list_searches_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test list_searches MCP tool."""
         register_search_tools_extended(mcp_server, real_client)
 
@@ -496,7 +496,7 @@ class TestSavedSearchTools:
         assert data["success"] is True
         print(f"Found {len(data['searches'])} saved searches")
 
-    def test_get_search_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_get_search_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test get_search MCP tool."""
         register_search_tools_extended(mcp_server, real_client)
 
@@ -517,7 +517,7 @@ class TestSavedSearchTools:
         real_client.expunge_search(search.guid)
         print("get_search tool test passed")
 
-    def test_create_search_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_create_search_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test create_search MCP tool."""
         register_search_tools_extended(mcp_server, real_client)
 
@@ -534,7 +534,7 @@ class TestSavedSearchTools:
         real_client.expunge_search(data["guid"])
         print(f"Created saved search: {search_name}")
 
-    def test_update_search_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_update_search_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test update_search MCP tool."""
         register_search_tools_extended(mcp_server, real_client)
 
@@ -556,7 +556,7 @@ class TestSavedSearchTools:
         real_client.expunge_search(search.guid)
         print("update_search tool test passed")
 
-    def test_expunge_search_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_expunge_search_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test expunge_search MCP tool."""
         register_search_tools_extended(mcp_server, real_client)
 
@@ -583,7 +583,7 @@ class TestSavedSearchTools:
 class TestNoteAdvancedTools:
     """Test all advanced note MCP tools with real API."""
 
-    def test_get_note_content_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_get_note_content_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test get_note_content MCP tool."""
         register_note_advanced_tools(mcp_server, real_client)
 
@@ -607,7 +607,7 @@ class TestNoteAdvancedTools:
         real_client.expunge_note(note.guid)
         print("get_note_content tool test passed")
 
-    def test_get_note_search_text_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_get_note_search_text_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test get_note_search_text MCP tool."""
         register_note_advanced_tools(mcp_server, real_client)
 
@@ -631,7 +631,7 @@ class TestNoteAdvancedTools:
         real_client.expunge_note(note.guid)
         print("get_note_search_text tool test passed")
 
-    def test_get_note_tag_names_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_get_note_tag_names_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test get_note_tag_names MCP tool."""
         register_note_advanced_tools(mcp_server, real_client)
 
@@ -659,7 +659,7 @@ class TestNoteAdvancedTools:
         real_client.expunge_tag(tag.guid)
         print("get_note_tag_names tool test passed")
 
-    def test_list_note_versions_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_list_note_versions_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test list_note_versions MCP tool (Premium only)."""
         register_note_advanced_tools(mcp_server, real_client)
 
@@ -692,7 +692,7 @@ class TestNoteAdvancedTools:
 class TestSyncTools:
     """Test all sync/utility MCP tools with real API."""
 
-    def test_get_sync_state_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_get_sync_state_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test get_sync_state MCP tool."""
         register_sync_tools(mcp_server, real_client)
 
@@ -705,7 +705,7 @@ class TestSyncTools:
         assert "update_count" in data
         print(f"Sync state: {data['update_count']}")
 
-    def test_get_default_notebook_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_get_default_notebook_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test get_default_notebook MCP tool."""
         register_sync_tools(mcp_server, real_client)
 
@@ -718,7 +718,7 @@ class TestSyncTools:
         assert "name" in data
         print(f"Default notebook: {data['name']}")
 
-    def test_find_note_counts_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_find_note_counts_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test find_note_counts MCP tool."""
         register_sync_tools(mcp_server, real_client)
 
@@ -730,7 +730,7 @@ class TestSyncTools:
         assert data["success"] is True
         print(f"Note counts retrieved")
 
-    def test_find_related_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_find_related_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test find_related MCP tool."""
         register_sync_tools(mcp_server, real_client)
 
@@ -751,7 +751,7 @@ class TestSyncTools:
 class TestReminderTools:
     """Test all reminder MCP tools with real API."""
 
-    def test_set_reminder_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_set_reminder_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test set_reminder MCP tool."""
         register_reminder_tools(mcp_server, real_client)
 
@@ -781,7 +781,7 @@ class TestReminderTools:
         real_client.expunge_note(note.guid)
         print("set_reminder tool test passed")
 
-    def test_complete_reminder_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_complete_reminder_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test complete_reminder MCP tool."""
         register_reminder_tools(mcp_server, real_client)
 
@@ -809,7 +809,7 @@ class TestReminderTools:
         real_client.expunge_note(note.guid)
         print("complete_reminder tool test passed")
 
-    def test_clear_reminder_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_clear_reminder_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test clear_reminder MCP tool."""
         register_reminder_tools(mcp_server, real_client)
 
@@ -837,7 +837,7 @@ class TestReminderTools:
         real_client.expunge_note(note.guid)
         print("clear_reminder tool test passed")
 
-    def test_list_reminders_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_list_reminders_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test list_reminders MCP tool."""
         register_reminder_tools(mcp_server, real_client)
 
@@ -849,7 +849,7 @@ class TestReminderTools:
         assert data["success"] is True
         print(f"Active reminders: {data['count']}")
 
-    def test_get_reminder_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_get_reminder_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test get_reminder MCP tool."""
         register_reminder_tools(mcp_server, real_client)
 
@@ -885,7 +885,7 @@ class TestReminderTools:
 class TestResourceTools:
     """Test resource MCP tools with real API."""
 
-    def test_get_resource_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_get_resource_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test get_resource MCP tool."""
         register_resource_tools(mcp_server, real_client)
 
@@ -901,7 +901,7 @@ class TestResourceTools:
             assert data["success"] is False
             print("get_resource tool handles errors correctly")
 
-    def test_get_resource_attributes_tool(self, mcp_server: FastMCP, real_client: EvernoteMCPClient):
+    def test_get_resource_attributes_tool(self, mcp_server: MCPServer, real_client: EvernoteMCPClient):
         """Test get_resource_attributes MCP tool."""
         register_resource_tools(mcp_server, real_client)
 

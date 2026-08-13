@@ -5,7 +5,7 @@ import json
 import logging
 from typing import Optional, Any
 
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 from evernote.edam.type.ttypes import ResourceAttributes
 from evernote_mcp.client import EvernoteMCPClient
 
@@ -14,7 +14,7 @@ from evernote_mcp.util.error_handler import handle_evernote_error
 logger = logging.getLogger(__name__)
 
 
-def register_resource_tools(mcp: FastMCP, client: EvernoteMCPClient):
+def register_resource_tools(mcp: MCPServer, client: EvernoteMCPClient):
     """Register resource-related MCP tools."""
 
     @mcp.tool()

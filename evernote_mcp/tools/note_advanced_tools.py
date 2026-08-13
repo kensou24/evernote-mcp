@@ -1,14 +1,14 @@
 """MCP tools for advanced note operations."""
 import logging
 import json
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 
 from evernote_mcp.util.error_handler import handle_evernote_error
 
 logger = logging.getLogger(__name__)
 
 
-def register_note_advanced_tools(mcp: FastMCP, client):
+def register_note_advanced_tools(mcp: MCPServer, client):
     """Register advanced note-related MCP tools."""
 
     @mcp.tool()

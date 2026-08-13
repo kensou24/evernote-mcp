@@ -1,14 +1,14 @@
 """MCP resources for notebooks."""
 import logging
 import json
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 
 from evernote_mcp.util.error_handler import handle_evernote_error
 
 logger = logging.getLogger(__name__)
 
 
-def register_notebook_resources(mcp: FastMCP, client):
+def register_notebook_resources(mcp: MCPServer, client):
     """Register notebook resources."""
 
     @mcp.resource("file://notebooks")
